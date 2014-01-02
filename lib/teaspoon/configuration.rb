@@ -13,21 +13,25 @@ module Teaspoon
     @@driver_cli_options = nil
 
     # console runner specific
-    cattr_accessor :driver, :server_timeout, :server_port, :fail_fast, :formatters, :suppress_log, :color, :coverage, :coverage_reports, :coverage_output_dir, :server
-    @@driver              = "phantomjs"
-    @@server              = nil
-    @@server_port         = nil
-    @@server_timeout      = 20
-    @@fail_fast           = true
-    @@formatters          = "dot"
-    @@suppress_log        = false
-    @@color               = true
-    @@coverage            = false
-    @@coverage_reports    = nil
-    @@coverage_output_dir = "coverage"
+    cattr_accessor :driver, :server_timeout, :server_port, :fail_fast, :formatters, :suppress_log, :color, :coverage, :coverage_reports, :coverage_output_dir, :server, :statements_coverage_threshold, :functions_coverage_threshold, :branches_coverage_threshold, :lines_coverage_threshold
+    @@driver                        = "phantomjs"
+    @@server                        = nil
+    @@server_port                   = nil
+    @@server_timeout                = 20
+    @@fail_fast                     = true
+    @@formatters                    = "dot"
+    @@suppress_log                  = false
+    @@color                         = true
+    @@coverage                      = false
+    @@coverage_reports              = nil
+    @@coverage_output_dir           = "coverage"
+    @@statements_coverage_threshold = nil
+    @@functions_coverage_threshold  = nil
+    @@branches_coverage_threshold   = nil
+    @@lines_coverage_threshold      = nil
 
     class Suite
-      attr_accessor :matcher, :helper, :stylesheets, :javascripts, :no_coverage, :boot_partial, :js_config
+      attr_accessor :matcher, :helper, :stylesheets, :javascripts, :no_coverage, :boot_partial, :js_config, :hooks
 
       def initialize
         @matcher         = "{spec/javascripts,app/assets}/**/*_spec.{js,js.coffee,coffee}"
@@ -38,6 +42,8 @@ module Teaspoon
         @boot_partial    = nil
         @js_config       = {}
 
+        @hooks = Hash.new {|h, k| h[k] = [] }
+
         default = Teaspoon.configuration.suites["default"]
         self.instance_eval(&default) if default
         yield self if block_given?
@@ -46,6 +52,10 @@ module Teaspoon
       def use_require=(val) # todo: deprecated in version 0.7.4
         puts "Deprecation Notice: use_require will be removed, specify 'require_js' for config.boot_partial instead."
         self.boot_partial = 'require_js' if val
+      end
+
+      def hook(group = :default, &block)
+        @hooks[group.to_s] << block
       end
     end
 

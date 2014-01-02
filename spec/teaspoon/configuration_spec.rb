@@ -63,6 +63,10 @@ describe Teaspoon::Configuration do
     expect(subject.coverage_reports).to eq(["text-summary"])
     expect(subject.coverage_output_dir).to eq("coverage")
     expect(subject.server).to be_nil
+    expect(subject.statements_coverage_threshold).to be_nil
+    expect(subject.functions_coverage_threshold).to be_nil
+    expect(subject.branches_coverage_threshold).to be_nil
+    expect(subject.lines_coverage_threshold).to be_nil
   end
 
   it "allows setting various configuration options" do
@@ -76,7 +80,6 @@ describe Teaspoon::Configuration do
     subject.suite(:test_suite) { }
     expect(subject.suites["test_suite"]).to be_a(Proc)
   end
-
 end
 
 
@@ -95,4 +98,12 @@ describe Teaspoon::Configuration::Suite do
     expect(subject.helper).to eq("helper_file")
   end
 
+
+  it "allows creating hooks" do
+    expect(subject.hooks).to eq({})
+
+    subject.hook {}
+
+    expect(subject.hooks['default'].length).to eq(1)
+  end
 end

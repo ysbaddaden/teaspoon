@@ -15,6 +15,7 @@ module Teaspoon
           result = generate_report(input, format)
           results << result if ["text", "text-summary"].include?(format.to_s)
         end
+        Teaspoon::CheckCoverage.new(input).check_coverage
         "\n#{results.join("\n\n")}\n"
       end
     end
@@ -28,7 +29,7 @@ module Teaspoon
     end
 
     def executable
-      @executable ||= which("istanbul")
+      @executable ||= istanbul()
     end
   end
 end
