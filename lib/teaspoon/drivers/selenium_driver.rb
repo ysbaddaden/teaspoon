@@ -10,12 +10,13 @@ module Teaspoon
       #       aren't used. There are a variety of Selenium options and browser-specific options
       #       supported by the binding that will take more thought and design to configure cleanly.
       def run_specs(suite, url, driver_cli_options = nil, options = nil)
-        runner = Teaspoon::Runner.new(suite)
+        runner  = Teaspoon::Runner.new(suite)
+        timeout = options[:timeout].to_i rescue 180
 
         driver = Selenium::WebDriver.for(:firefox)
         driver.navigate.to(url)
 
-        Selenium::WebDriver::Wait.new(timeout: 180, interval: 0.01, message: "Timed out").until do
+        Selenium::WebDriver::Wait.new(timeout: timeout, interval: 0.01, message: "Timed out").until do
           done = driver.execute_script("return window.Teaspoon && window.Teaspoon.finished")
           driver.execute_script("return window.Teaspoon && window.Teaspoon.getMessages() || []").each do |line|
             runner.process("#{line}\n")
