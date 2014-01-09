@@ -18,4 +18,4 @@ class Teaspoon.Reporters.HTML extends Teaspoon.Reporters.HTML
 
 
   envInfo: ->
-    "angular-scenario 1.0.5"
+    "angular-scenario 1.2.0"
