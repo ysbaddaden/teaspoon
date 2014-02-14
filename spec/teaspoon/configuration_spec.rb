@@ -69,6 +69,7 @@ describe Teaspoon::Configuration do
     expect(subject.branches_coverage_threshold).to be_nil
     expect(subject.lines_coverage_threshold).to be_nil
     expect(subject.timeout).to eq(180)
+    expect(subject.browser).to eq("firefox")
   end
 
   it "allows setting various configuration options" do

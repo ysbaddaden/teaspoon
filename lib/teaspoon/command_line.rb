@@ -46,6 +46,10 @@ module Teaspoon
           @options[:timeout] = seconds
         end
 
+        parser.on("-b", "--browser BROWSER", "Sets the browser for the suite to be run with (only for selenium).") do |browser|
+          @options[:browser] = browser
+        end
+
         parser.on("--server SERVER", "Sets server to use with Rack.") do |server|
           @options[:server] = server
         end
