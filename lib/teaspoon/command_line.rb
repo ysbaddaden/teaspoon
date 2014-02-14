@@ -62,6 +62,10 @@ module Teaspoon
           @options[:timeout] = seconds
         end
 
+        parser.on("--browser BROWSER", "Sets the browser for the test suite to run (only supported by selenium).") do |browser|
+          @options[:browser] = browser
+        end
+
         parser.separator("\n  **** Filtering ****\n\n")
 
         parser.on("-s", "--suite SUITE", "Focus to a specific suite.") do |suite|
