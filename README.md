@@ -278,7 +278,7 @@ An example text report that's output to the console after the tests have complet
 File                |   % Stmts |% Branches |   % Funcs |   % Lines |
 --------------------+-----------+-----------+-----------+-----------+
   phantomjs/        |     93.75 |        75 |     94.12 |     93.65 |
-    runner.coffee   |     93.75 |        75 |     94.12 |     93.65 |
+    runner.js       |     93.75 |        75 |     94.12 |     93.65 |
 --------------------+-----------+-----------+-----------+-----------+
 All files           |     93.75 |        75 |     94.12 |     93.65 |
 --------------------+-----------+-----------+-----------+-----------+
@@ -377,6 +377,13 @@ end
   Accepts an array of filenames or regular expressions. The default is to exclude assets from vendors or gems.<br/><br/>
 
   <b>default:</b> <code>`[%r{/lib/ruby/gems/}, %r{/vendor/assets/}, %r{/support/}, %r{/(.+)_helper.}]`</code>
+</dd>
+
+<dt> normalize_asset_path </dt><dd>
+  When using custom file-extensions you might need to supply a custom asset path normalization. If you need to match a
+  custom extension, simply supply a custom lambda/proc that returns the desired filename.<br/><br/>
+
+  <b>default:</b> <code>`filename.gsub('.erb', '').gsub(/(\.js\.coffee|\.coffee)$/, ".js")`</code>
 </dd>
 
 </dl>

@@ -14,7 +14,7 @@ module Teaspoon
     @@driver_cli_options = nil
 
     # console runner specific
-    cattr_accessor :driver, :server_timeout, :server_port, :fail_fast, :formatters, :suppress_log, :color, :coverage, :coverage_reports, :coverage_output_dir, :server, :statements_coverage_threshold, :functions_coverage_threshold, :branches_coverage_threshold, :lines_coverage_threshold
+    cattr_accessor :driver, :server_timeout, :server_port, :fail_fast, :formatters, :suppress_log, :color, :coverage, :coverage_reports, :coverage_output_dir, :server, :statements_coverage_threshold, :functions_coverage_threshold, :branches_coverage_threshold, :lines_coverage_threshold, :timeout
     @@driver                        = "phantomjs"
     @@server                        = nil
     @@server_port                   = nil
@@ -30,9 +30,10 @@ module Teaspoon
     @@functions_coverage_threshold  = nil
     @@branches_coverage_threshold   = nil
     @@lines_coverage_threshold      = nil
+    @@timeout                       = 180
 
     class Suite
-      attr_accessor :matcher, :helper, :stylesheets, :javascripts, :no_coverage, :boot_partial, :js_config, :hooks
+      attr_accessor :matcher, :helper, :stylesheets, :javascripts, :no_coverage, :boot_partial, :js_config, :hooks, :normalize_asset_path
 
       def initialize
         @matcher         = "{spec/javascripts,app/assets}/**/*_spec.{js,js.coffee,coffee}"
@@ -42,6 +43,9 @@ module Teaspoon
         @no_coverage     = [%r{/lib/ruby/gems/}, %r{/vendor/assets/}, %r{/support/}, %r{/(.+)_helper.}]
         @boot_partial    = nil
         @js_config       = {}
+        @normalize_asset_path = lambda do |filename|
+          filename.gsub('.erb', '').gsub(/(\.js\.coffee|\.coffee)$/, ".js")
+        end
 
         @hooks = Hash.new {|h, k| h[k] = [] }
 
@@ -57,6 +61,10 @@ module Teaspoon
 
       def hook(group = :default, &block)
         @hooks[group.to_s] << block
+      end
+
+      def normalize_asset_path(filename)
+        @normalize_asset_path.call(filename)
       end
     end
 
@@ -99,7 +107,7 @@ module Teaspoon
       next unless ENV[directive].present?
       @@configuration.send("#{directive.downcase}=", ENV[directive] == "true")
     end
-    %w(DRIVER DRIVER_CLI_OPTIONS SERVER SERVER_TIMEOUT SERVER_PORT FORMATTERS COVERAGE_REPORTS COVERAGE_OUTPUT_DIR).each do |directive|
+    %w(DRIVER DRIVER_CLI_OPTIONS TIMEOUT SERVER SERVER_TIMEOUT SERVER_PORT FORMATTERS COVERAGE_REPORTS COVERAGE_OUTPUT_DIR).each do |directive|
       next unless ENV[directive].present?
       @@configuration.send("#{directive.downcase}=", ENV[directive])
     end
