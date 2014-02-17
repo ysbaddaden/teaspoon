@@ -12,7 +12,7 @@ module Teaspoon
       def run_specs(suite, url, driver_cli_options = nil)
         runner = Teaspoon::Runner.new(suite)
 
-        driver = Selenium::WebDriver.for(:firefox)
+        driver = Selenium::WebDriver.for(Teaspoon.configuration.browser.to_sym)
         driver.navigate.to(url)
 
         Selenium::WebDriver::Wait.new(timeout: Teaspoon.configuration.timeout.to_i, interval: 0.01, message: "Timed out").until do
